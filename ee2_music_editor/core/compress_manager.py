@@ -1,9 +1,16 @@
-import os
 import shutil
 from concurrent.futures.thread import ThreadPoolExecutor
 from pathlib import Path
 
 import ffmpeg
+
+from ..utils.funs import get_desired_thread_number
+from .base_manager import BaseManager
+
+
+class CompressManager(BaseManager):
+    def execute(self) -> None:
+        raise NotImplementedError
 
 
 def get_ffmpeg_input(input_path: Path, output_path: Path) -> list[ffmpeg]:
@@ -19,7 +26,7 @@ def get_ffmpeg_input(input_path: Path, output_path: Path) -> list[ffmpeg]:
 
 
 def start_ffmpeg_threads(ffmpeg_cmds: list[ffmpeg]) -> None:
-    with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
+    with ThreadPoolExecutor(max_workers=get_desired_thread_number(reserved=0)) as executor:
         executor.map(lambda stream: stream.run(), ffmpeg_cmds)
 
 

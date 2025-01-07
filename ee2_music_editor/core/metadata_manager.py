@@ -7,6 +7,13 @@ from typing import Any
 from mutagen.id3 import ID3, TXXX
 from mutagen.mp3 import MP3
 
+from .base_manager import BaseManager
+
+
+class MetadataManager(BaseManager):
+    def execute(self) -> None:
+        raise NotImplementedError
+
 
 def add_metadata_to_file(file_path: str | Path, output_path: str | Path, metadata_string: str) -> None:
     audio = MP3(file_path, ID3=ID3)
