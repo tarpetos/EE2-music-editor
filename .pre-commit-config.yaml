@@ -1,0 +1,31 @@
+fail_fast: true
+
+default_install_hook_types: [pre-commit, commit-msg, post-checkout, post-merge, post-rewrite, pre-push]
+default_stages: [pre-commit]
+
+repos:
+-   repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.23
+    hooks:
+      - id: validate-pyproject
+-   repo: https://github.com/astral-sh/uv-pre-commit
+    # uv version.
+    rev: 0.5.15
+    hooks:
+      - id: uv-lock
+      - id: uv-sync
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+    -   id: check-docstring-first
+        stages: [pre-commit]
+    -   id: end-of-file-fixer
+        stages: [pre-commit]
+    -   id: trailing-whitespace
+        stages: [pre-commit]
+-   repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.8.6
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+      - id: ruff-format
