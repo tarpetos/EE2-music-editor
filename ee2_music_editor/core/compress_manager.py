@@ -5,7 +5,7 @@ from pathlib import Path
 import ffmpeg
 
 from ..utils.funs import get_desired_thread_number
-from .base_manager import Manager
+from .manager import Manager
 
 
 class CompressManager(Manager):
