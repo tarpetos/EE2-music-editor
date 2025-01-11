@@ -15,21 +15,21 @@ class Region(StrEnum):
 
 
 class Epoch(IntEnum):
-    STONE = 1
-    COPPER = 2
-    BRONZE = 3
-    IRON = 4
-    DARK = 5
-    MIDDLE = 6
-    RENAISSANCE = 7
-    IMPERIAL = 8
-    ENLIGHTENMENT = 9
-    INDUSTRIAL = 10
-    MODERN = 11
-    ATOMIC = 12
-    DIGITAL = 13
-    GENETIC = 14
-    SYNTHETIC = 15
+    STONE = auto()
+    COPPER = auto()
+    BRONZE = auto()
+    IRON = auto()
+    DARK = auto()
+    MIDDLE = auto()
+    RENAISSANCE = auto()
+    IMPERIAL = auto()
+    ENLIGHTENMENT = auto()
+    INDUSTRIAL = auto()
+    MODERN = auto()
+    ATOMIC = auto()
+    DIGITAL = auto()
+    GENETIC = auto()
+    SYNTHETIC = auto()
 
 
 @dataclass
