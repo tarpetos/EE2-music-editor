@@ -1,9 +1,35 @@
 from dataclasses import dataclass, field
-from enum import Enum, IntEnum
+from enum import Enum, IntEnum, StrEnum, auto
 from pathlib import Path
 from typing import Final
 
-from pydantic import dataclasses, field_validator
+from pydantic import dataclasses
+
+
+class Region(StrEnum):
+    WEST = auto()
+    FAR_EAST = auto()
+    MIDDLE_EAST = auto()
+    MESO_AMERICAN = auto()
+    AFRICAN = auto()
+
+
+class Epoch(IntEnum):
+    STONE = 1
+    COPPER = 2
+    BRONZE = 3
+    IRON = 4
+    DARK = 5
+    MIDDLE = 6
+    RENAISSANCE = 7
+    IMPERIAL = 8
+    ENLIGHTENMENT = 9
+    INDUSTRIAL = 10
+    MODERN = 11
+    ATOMIC = 12
+    DIGITAL = 13
+    GENETIC = 14
+    SYNTHETIC = 15
 
 
 @dataclass
@@ -22,15 +48,12 @@ class _FilenameExtender:
     filenames: list[str | _FilenameEnumerate] = field(default_factory=list)
 
     def __post_init__(self) -> None:
+        self.extension = self.extension.replace(".", "")
+
         self.filenames = [
             f"{filename.removesuffix('.')}.{self.extension}" if not Path(filename).suffix else filename
             for filename in self.filenames
         ]
-
-    @field_validator("extension")
-    @classmethod
-    def parse_extension(cls, value: str) -> str:
-        return value.replace(".", "")
 
 
 @dataclass
@@ -39,13 +62,13 @@ class ShellMusic(_FilenameExtender): ...
 
 @dataclass
 class RegionSet(_FilenameExtender):
-    region: str | None = None
+    region: Region | None = None
 
 
 @dataclass
 class EpochSet(_FilenameExtender):
-    epoch_first: str | None = None
-    epoch_last: str | None = None
+    epoch_first: Epoch | None = None
+    epoch_last: Epoch | None = None
 
 
 @dataclass
@@ -54,27 +77,32 @@ class InGameMusic:
     epoch_sets: list[EpochSet]
 
 
+# noinspection PyUnresolvedReferences
 class EE2Music(Enum):
+    EXPECTED_QUANTITY: Final[int] = 83  # 2 - shell music; 81 - in_game music
+
     SHELL: Final[ShellMusic] = ShellMusic(
         filenames=[
             "Shell_music",
             "Intro_movie_music",
         ]
     )
+
     IN_GAME: Final[InGameMusic] = InGameMusic(
         region_sets=[
             RegionSet(
-                region="West",
+                region=Region.WEST,
                 filenames=_FilenameEnumerate("amb_we_", count=10),
             ),
             RegionSet(
-                region="FarEast",
+                region=Region.FAR_EAST,
                 filenames=[
                     "amb_fe_1",
                     "amb_fe_2",
                     "amb_fe_3",
                     "amb_fe_4",
-                    "amb_fe_4b" "amb_fe_5",
+                    "amb_fe_4b",
+                    "amb_fe_5",
                     "amb_fe_5b",
                     "amb_fe_6",
                     "amb_fe_6b",
@@ -87,7 +115,7 @@ class EE2Music(Enum):
                 ],
             ),
             RegionSet(
-                region="MiddleEast",
+                region=Region.MIDDLE_EAST,
                 filenames=[
                     "amb_me_1",
                     "amb_me_1b",
@@ -112,7 +140,7 @@ class EE2Music(Enum):
                 ],
             ),
             RegionSet(
-                region="MesoAmerican",
+                region=Region.MESO_AMERICAN,
                 filenames=[
                     "amb_am_1",
                     "amb_am_1b",
@@ -134,49 +162,81 @@ class EE2Music(Enum):
             # @EE2X @MRC
             # New African region music.
             RegionSet(
-                region="African",
+                region=Region.AFRICAN,
                 filenames=_FilenameEnumerate("amb_af_", count=13),
             ),
         ],
         epoch_sets=[
             # 1-10
             EpochSet(
-                epoch_first="Stone",
-                epoch_last="Industrial",
+                epoch_first=Epoch.STONE,
+                epoch_last=Epoch.INDUSTRIAL,
             ),
             # 11-13
             EpochSet(
-                epoch_first="Modern",
-                epoch_last="Digital",
+                epoch_first=Epoch.MODERN,
+                epoch_last=Epoch.DIGITAL,
                 filenames=_FilenameEnumerate("amb_mid_late_", count=8),
             ),
             # 14-15
             EpochSet(
-                epoch_first="Genetic",
-                epoch_last="Synthetic",
+                epoch_first=Epoch.GENETIC,
+                epoch_last=Epoch.SYNTHETIC,
                 filenames=_FilenameEnumerate("amb_mid_late_", count=8),
             ),
         ],
     )
 
+    @classmethod
+    def by_shell(cls) -> list[str]:
+        return cls.SHELL.value.filenames
 
-class Epoch(IntEnum):
-    STONE = 1
-    COPPER = 2
-    BRONZE = 3
-    IRON = 4
-    DARK = 5
-    MIDDLE = 6
-    RENAISSANCE = 7
-    IMPERIAL = 8
-    ENLIGHTENMENT = 9
-    INDUSTRIAL = 10
-    MODERN = 11
-    ATOMIC = 12
-    DIGITAL = 13
-    GENETIC = 14
-    SYNTHETIC = 15
+    @classmethod
+    def by_region(cls, region: Region | None = None) -> list[str]:
+        return cls.__get_in_game_by_region(region)
+
+    @classmethod
+    def by_epoch(cls, epoch: Epoch | None = None) -> list[str]:
+        return cls.__get_in_game_by_epoch(epoch)
+
+    @classmethod
+    def all(cls) -> list[str]:
+        _all = cls.by_shell() + cls.by_region() + cls.by_epoch()
+        assert (
+            (actual_quantity := len(_all)) == cls.EXPECTED_QUANTITY.value
+        ), f"Invalid number of MP3 files! Expected {cls.EXPECTED_QUANTITY.value}, got {actual_quantity}"
+        return cls.by_shell() + cls.by_region() + cls.by_epoch()
+
+    @classmethod
+    def __get_in_game_by_region(cls, region: Region | None = None) -> list[str]:
+        _lst = []
+
+        if region is None:
+            [_lst.extend(region_set.filenames) for region_set in cls.IN_GAME.value.region_sets]
+        else:
+            for region_set in cls.IN_GAME.value.region_sets:
+                region_set.region == region and _lst.extend(region_set.filenames)
+
+        return _lst
+
+    @classmethod
+    def __get_in_game_by_epoch(cls, epoch: Epoch | None = None) -> list[str]:
+        _lst = []
+
+        if epoch is None:
+            [_lst.extend(epoch_set.filenames) for epoch_set in cls.IN_GAME.value.epoch_sets]
+        else:
+            for epoch_set in cls.IN_GAME.value.epoch_sets:
+                epoch_set.epoch_first <= epoch <= epoch_set.epoch_last and _lst.extend(epoch_set.filenames)
+
+        return list(dict.fromkeys(_lst))
 
 
-print(EE2Music.SHELL)
-print(EE2Music.IN_GAME)
+print(EE2Music.by_shell())
+print(EE2Music.by_region())
+print(EE2Music.by_region(Region.WEST))
+print(EE2Music.by_region(Region.AFRICAN))
+print(EE2Music.by_epoch())
+print(EE2Music.by_epoch(Epoch.STONE))
+print(EE2Music.by_epoch(Epoch.MODERN))
+print(EE2Music.all())
