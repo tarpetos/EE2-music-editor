@@ -3,7 +3,7 @@ import subprocess
 from concurrent.futures.thread import ThreadPoolExecutor
 
 from ..utils.funs import get_desired_thread_number
-from .base_manager import BaseManager
+from .base_manager import Manager
 
 
 class SearchEngine:
@@ -15,7 +15,7 @@ class SearchEngine:
         }
 
 
-class SearchManager(BaseManager):
+class SearchManager(Manager):
     def search(self, query: str) -> None:
         if platform.system() == "Windows":
             ...

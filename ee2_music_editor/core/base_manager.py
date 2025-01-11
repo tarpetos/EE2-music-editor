@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class BaseManager(ABC):
+class Manager(ABC):
     @abstractmethod
     def execute(self) -> None:
         raise NotImplementedError

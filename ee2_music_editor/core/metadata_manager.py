@@ -7,10 +7,10 @@ from typing import Any
 from mutagen.id3 import ID3, TXXX
 from mutagen.mp3 import MP3
 
-from .base_manager import BaseManager
+from .base_manager import Manager
 
 
-class MetadataManager(BaseManager):
+class MetadataManager(Manager):
     def execute(self) -> None:
         raise NotImplementedError
 
