@@ -1,9 +1,17 @@
-import os
 import shutil
 from concurrent.futures.thread import ThreadPoolExecutor
 from pathlib import Path
 
 import ffmpeg
+
+from ee2_music_editor.utils.funs import get_desired_thread_number
+
+from .manager import Manager
+
+
+class CompressManager(Manager):
+    def execute(self) -> None:
+        raise NotImplementedError
 
 
 def get_ffmpeg_input(input_path: Path, output_path: Path) -> list[ffmpeg]:
@@ -19,15 +27,16 @@ def get_ffmpeg_input(input_path: Path, output_path: Path) -> list[ffmpeg]:
 
 
 def start_ffmpeg_threads(ffmpeg_cmds: list[ffmpeg]) -> None:
-    with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
+    with ThreadPoolExecutor(max_workers=get_desired_thread_number(reserved=0)) as executor:
         executor.map(lambda stream: stream.run(), ffmpeg_cmds)
 
 
 def main() -> None:
     _ffmpeg: str = "ffmpeg"
     if shutil.which(_ffmpeg) is None:
+        msg = f"{_ffmpeg} is not installed! Install it using command:\n\tsudo apt-get install {_ffmpeg}\n"
         raise RuntimeError(
-            f"{_ffmpeg} is not installed! Install it using command:\n" f"\tsudo apt-get install {_ffmpeg}\n"
+            msg,
         )
     ffmpeg_cmds = get_ffmpeg_input(
         input_path=Path.home() / "EE2_bebra" / "Empire Earth II Gold Edition" / "music" / "Ambient",
