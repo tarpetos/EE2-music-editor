@@ -1,10 +1,11 @@
 import asyncio
 import os
 from collections import abc
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 
-async def wait_for_first(*coros: abc.Awaitable[Any] | Iterable[abc.Awaitable[Any]]) -> Any:
+async def wait_for_first(*coros: abc.Awaitable[Any] | Iterable[abc.Awaitable[Any]]) -> Any | None:  # noqa: ANN401
     flat_coros = []
     for coro in coros:
         if isinstance(coro, abc.Awaitable):

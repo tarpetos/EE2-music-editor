@@ -4,7 +4,8 @@ from pathlib import Path
 
 import ffmpeg
 
-from ..utils.funs import get_desired_thread_number
+from ee2_music_editor.utils.funs import get_desired_thread_number
+
 from .manager import Manager
 
 
@@ -33,8 +34,9 @@ def start_ffmpeg_threads(ffmpeg_cmds: list[ffmpeg]) -> None:
 def main() -> None:
     _ffmpeg: str = "ffmpeg"
     if shutil.which(_ffmpeg) is None:
+        msg = f"{_ffmpeg} is not installed! Install it using command:\n\tsudo apt-get install {_ffmpeg}\n"
         raise RuntimeError(
-            f"{_ffmpeg} is not installed! Install it using command:\n" f"\tsudo apt-get install {_ffmpeg}\n"
+            msg,
         )
     ffmpeg_cmds = get_ffmpeg_input(
         input_path=Path.home() / "EE2_bebra" / "Empire Earth II Gold Edition" / "music" / "Ambient",

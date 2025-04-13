@@ -2,7 +2,8 @@ import platform
 import subprocess
 from concurrent.futures.thread import ThreadPoolExecutor
 
-from ..utils.funs import get_desired_thread_number
+from ee2_music_editor.utils.funs import get_desired_thread_number
+
 from .manager import Manager
 
 
@@ -17,14 +18,11 @@ class SearchEngine:
 
 class SearchManager(Manager):
     def search(self, query: str) -> None:
-        if platform.system() == "Windows":
-            ...
-        elif platform.system() == "Linux":
-            ...
-        elif platform.system() == "Darwin":
+        if platform.system() == "Windows" or platform.system() == "Linux" or platform.system() == "Darwin":
             ...
         else:
-            raise NotImplementedError("Unsupported OS platform!")
+            msg = "Unsupported OS platform!"
+            raise NotImplementedError(msg)
 
         cmd = ["sudo", "plocate", query]
         # cmd = ["sudo", "find", "/", "-name", query]
@@ -35,9 +33,8 @@ class SearchManager(Manager):
         # -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName"
         # cmd = ["powershell", "-Command", powershell_cmd]
 
-        status = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout = status.stdout.decode("utf-8")
-        print(stdout)
+        status = subprocess.run(cmd, capture_output=True, check=False)
+        status.stdout.decode("utf-8")
 
     def execute(self) -> None:
         queries = ("EE2.exe", "EE2X.exe")

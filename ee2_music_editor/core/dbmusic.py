@@ -85,7 +85,7 @@ class EE2Music(Enum):
         filenames=[
             "Shell_music",
             "Intro_movie_music",
-        ]
+        ],
     )
 
     IN_GAME: Final[InGameMusic] = InGameMusic(
@@ -202,7 +202,7 @@ class EE2Music(Enum):
     @classmethod
     def all(cls) -> list[str]:
         _all = cls.by_shell() + cls.by_region() + cls.by_epoch()
-        assert (
+        assert (  # noqa: S101
             (actual_quantity := len(_all)) == cls.EXPECTED_QUANTITY.value
         ), f"Invalid number of MP3 files! Expected {cls.EXPECTED_QUANTITY.value}, got {actual_quantity}"
         return cls.by_shell() + cls.by_region() + cls.by_epoch()
@@ -230,13 +230,3 @@ class EE2Music(Enum):
                 epoch_set.epoch_first <= epoch <= epoch_set.epoch_last and _lst.extend(epoch_set.filenames)
 
         return list(dict.fromkeys(_lst))
-
-
-print(EE2Music.by_shell())
-print(EE2Music.by_region())
-print(EE2Music.by_region(Region.WEST))
-print(EE2Music.by_region(Region.AFRICAN))
-print(EE2Music.by_epoch())
-print(EE2Music.by_epoch(Epoch.STONE))
-print(EE2Music.by_epoch(Epoch.MODERN))
-print(EE2Music.all())

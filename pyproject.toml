@@ -9,11 +9,12 @@ dependencies = [
     "ffmpeg-python==0.2.0",
     "mutagen==1.47.0",
     "pyinstaller==6.11.1",
-    "fastapi>=0.115.12",
-    "uvicorn>=0.34.0",
-    "httpx>=0.28.1",
-    "pytest>=8.3.5",
-    "python-multipart>=0.0.20",
+    "fastapi==0.115.12",
+    "uvicorn==0.34.0",
+    "httpx==0.28.1",
+    "pytest==8.3.5",
+    "python-multipart==0.0.20",
+    "ruff==0.11.5",
 ]
 
 [dependency-groups]
@@ -27,4 +28,10 @@ line-length = 120
 [tool.ruff.lint]
 preview = true
 explicit-preview-rules = true
-select = ["E", "F", "I"]
+ignore = [
+    "D100", "D101", "D102", "D103", "D104", "D105", "D107", "D203", "D212", "D401",
+    "ERA001",
+    "RET503",
+    "S603",
+]
+select = ["ALL"]

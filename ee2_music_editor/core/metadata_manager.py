@@ -1,5 +1,7 @@
 import json
 import shutil
+import time
+import zoneinfo
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -35,7 +37,8 @@ def decode_metadata_from_file(file_path: str | Path) -> dict[str, Any]:
 
 
 def main() -> None:
-    current_date = datetime.now()
+    local_timezone = zoneinfo.ZoneInfo(time.tzname[0])
+    current_date = datetime.now(tz=local_timezone)
     metadata = {
         "year": current_date.year,
         "month": current_date.month,
@@ -50,8 +53,7 @@ def main() -> None:
     output_path: Path = Path(__file__).absolute().parent / "music" / "mutated" / "amb_af_1.mp3"
 
     add_metadata_to_file(input_path, output_path, metadata_string)
-    result = decode_metadata_from_file(output_path)
-    print(result)
+    decode_metadata_from_file(output_path)
 
 
 if __name__ == "__main__":
