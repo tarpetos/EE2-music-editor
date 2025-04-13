@@ -5,11 +5,15 @@ description = "Soundtrack editor for EE2/EE2(AoS) games"
 readme = "README.md"
 requires-python = ">=3.13, <3.14"
 dependencies = [
-    "flet[all]==0.25.2",
     "pydantic==2.10.4",
     "ffmpeg-python==0.2.0",
     "mutagen==1.47.0",
     "pyinstaller==6.11.1",
+    "fastapi>=0.115.12",
+    "uvicorn>=0.34.0",
+    "httpx>=0.28.1",
+    "pytest>=8.3.5",
+    "python-multipart>=0.0.20",
 ]
 
 [dependency-groups]
